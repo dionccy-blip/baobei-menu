@@ -2,650 +2,484 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>我们的菜单</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
-    font-family: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
-    background: #faf8f5;
-    min-height: 100vh;
-    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+    background: #f5f5f5;
+    height: 100vh; overflow: hidden;
   }
 
-  .container {
-    max-width: 520px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* 头部 */
-  .header {
-    text-align: center;
-    padding: 30px 20px 20px;
-    position: relative;
-  }
-  .header .mascot {
-    font-size: 48px;
-    display: inline-block;
-  }
-  .header h1 {
-    font-size: 28px;
-    color: #555;
-    margin: 8px 0;
-  }
-  .header .subtitle {
-    color: #999; font-size: 15px; letter-spacing: 2px;
-  }
-
-  /* 订单摘要栏 */
-  .order-bar {
-    background: white; border-radius: 20px; padding: 14px 20px;
-    box-shadow: 0 4px 20px rgba(255, 107, 157, 0.12);
+  /* 顶部栏 */
+  .topbar {
+    background: #fff; padding: 12px 16px;
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 18px;
-    position: sticky; top: 10px; z-index: 10;
-    backdrop-filter: blur(10px);
-    border: 2px dashed #ffc0cb;
+    border-bottom: 1px solid #eee;
+    position: sticky; top: 0; z-index: 10;
   }
-  .order-bar .count {
-    background: linear-gradient(135deg, #ff6b9d, #ff8e8e);
-    color: white; border-radius: 50%; width: 32px; height: 32px;
+  .topbar h1 { font-size: 17px; font-weight: 600; color: #333; }
+  .cart-btn {
+    position: relative; background: #ff6600; color: #fff; border: none;
+    border-radius: 16px; padding: 6px 14px; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .cart-btn .badge {
+    background: #fff; color: #ff6600; border-radius: 50%;
+    min-width: 18px; height: 18px; font-size: 11px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: bold; box-shadow: 0 3px 10px rgba(255,107,157,0.3);
-  }
-  .order-bar .summary { flex: 1; margin-left: 12px; color: #666; font-size: 14px; }
-  .order-bar .btn-view {
-    background: linear-gradient(135deg, #ff6b9d, #ff8e8e);
-    color: white; border: none; border-radius: 25px; padding: 10px 20px;
-    font-family: inherit; font-size: 14px; cursor: pointer;
-    box-shadow: 0 4px 15px rgba(255,107,157,0.25);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .order-bar .btn-view:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255,107,157,0.35); }
-  .order-bar .btn-view:active { transform: scale(0.95); }
-
-  /* 分类标题 */
-  .category-title {
-    font-size: 22px; color: #555;
-    margin: 24px 0 12px; padding-left: 8px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .category-title span { font-size: 28px; }
-
-  /* 菜品卡片 */
-  .dish-card {
-    background: white;
-    border-radius: 22px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    transition: transform 0.25s, box-shadow 0.25s;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid transparent;
-  }
-  .dish-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(255,107,157,0.15);
-    border-color: #ffc0cb;
-  }
-  .dish-card:active { transform: scale(0.97); }
-  .dish-card.selected {
-    border-color: #ff6b9d;
-    background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
-    box-shadow: 0 6px 25px rgba(255,107,157,0.2);
-  }
-  .dish-card.selected::after {
-    content: '✓';
-    position: absolute; top: 12px; right: 16px;
-    font-size: 20px; color: #ff6b9d;
-    animation: popIn 0.3s ease;
-  }
-  @keyframes popIn {
-    0% { transform: scale(0); }
-    60% { transform: scale(1.3); }
-    100% { transform: scale(1); }
+    font-weight: bold;
   }
 
-  .dish-card .emoji { font-size: 48px; margin-bottom: 6px; display: block; }
-  .dish-card .name { font-size: 20px; font-weight: bold; color: #444; margin-bottom: 4px; }
-  .dish-card .desc { font-size: 13px; color: #aaa; line-height: 1.5; }
-  .dish-card .tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-  .dish-card .tag {
-    background: #fff0f3; color: #ff6b9d; border-radius: 20px;
-    padding: 3px 12px; font-size: 12px;
+  /* 主体两栏 */
+  .main { display: flex; height: calc(100vh - 50px); }
+
+  /* 左侧分类 */
+  .sidebar {
+    width: 90px; background: #f8f8f8; overflow-y: auto;
+    flex-shrink: 0; padding: 4px 0;
+  }
+  .sidebar .cat {
+    padding: 14px 8px; text-align: center; font-size: 13px; color: #666;
+    cursor: pointer; position: relative; line-height: 1.3;
+  }
+  .sidebar .cat.active {
+    background: #fff; color: #ff6600; font-weight: 600;
+  }
+  .sidebar .cat.active::before {
+    content: ''; position: absolute; left: 0; top: 10%; height: 80%;
+    width: 3px; background: #ff6600; border-radius: 0 2px 2px 0;
   }
 
-  /* 选项弹出 */
-  .option-popup {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.4); z-index: 100;
-    backdrop-filter: blur(3px);
-    justify-content: center; align-items: flex-end;
+  /* 右侧菜品 */
+  .content { flex: 1; overflow-y: auto; background: #fff; }
+
+  .section-title {
+    padding: 12px 14px 6px; font-size: 14px; color: #999;
+    position: sticky; top: 0; background: #fff; z-index: 2;
+    border-bottom: 1px solid #f0f0f0;
   }
-  .option-popup.show { display: flex; }
-  .option-sheet {
-    background: white; border-radius: 28px 28px 0 0;
-    width: 100%; max-width: 520px; padding: 8px 20px 30px;
-    animation: slideUp 0.35s ease;
-    max-height: 70vh; overflow-y: auto;
+
+  .dish-item {
+    display: flex; align-items: center; padding: 12px 14px;
+    border-bottom: 1px solid #f5f5f5; cursor: pointer;
+    transition: background 0.15s;
   }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
+  .dish-item:active { background: #fafafa; }
+  .dish-item.selected { background: #fff8f5; }
+
+  .dish-img {
+    width: 56px; height: 56px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; flex-shrink: 0; margin-right: 10px;
   }
-  .option-sheet h3 { text-align: center; font-size: 22px; color: #555; padding: 16px 0; }
-  .option-sheet .option-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 8px; border-bottom: 1px solid #f5f5f5;
-    cursor: pointer; border-radius: 14px; transition: background 0.2s;
+
+  .dish-info { flex: 1; min-width: 0; }
+  .dish-info .name { font-size: 15px; color: #333; font-weight: 500; }
+  .dish-info .desc { font-size: 12px; color: #999; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dish-info .tags { margin-top: 4px; display: flex; gap: 4px; }
+  .dish-info .tag {
+    font-size: 10px; padding: 1px 6px; border-radius: 3px;
+    background: #fff3e0; color: #ff6600;
   }
-  .option-sheet .option-item:hover { background: #fff5f7; }
-  .option-sheet .option-item.chosen { background: #fff0f3; border-radius: 14px; }
-  .option-sheet .option-emoji { font-size: 36px; margin-right: 12px; }
-  .option-radio {
-    width: 22px; height: 22px; border-radius: 50%;
-    border: 2px solid #ddd; flex-shrink: 0;
-    transition: all 0.2s;
+
+  .dish-action {
+    flex-shrink: 0; margin-left: 8px;
   }
-  .option-item.chosen .option-radio {
-    border-color: #ff6b9d; background: #ff6b9d;
-    box-shadow: inset 0 0 0 4px white;
+  .btn-add {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #ff6600; color: #fff; border: none;
+    font-size: 16px; line-height: 24px; text-align: center;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
-  .btn-confirm {
-    display: block; width: 100%; margin-top: 16px;
-    background: linear-gradient(135deg, #ff6b9d, #ff8e8e);
-    color: white; border: none; border-radius: 28px;
-    padding: 14px; font-family: inherit; font-size: 18px;
-    cursor: pointer; box-shadow: 0 6px 20px rgba(255,107,157,0.3);
-    transition: transform 0.2s;
+  .btn-add.added {
+    background: #fff; color: #ff6600; border: 1.5px solid #ff6600;
   }
-  .btn-confirm:hover { transform: scale(1.02); }
-  .btn-confirm:active { transform: scale(0.96); }
+  .btn-add .count-num { font-size: 12px; }
 
   /* 购物车弹窗 */
-  .cart-popup {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.4); z-index: 200;
-    backdrop-filter: blur(3px);
-    justify-content: center; align-items: center;
+  .cart-mask {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 100; flex-direction: column; justify-content: flex-end;
   }
-  .cart-popup.show { display: flex; }
+  .cart-mask.show { display: flex; }
   .cart-panel {
-    background: white; border-radius: 28px; width: 92%; max-width: 440px;
-    padding: 24px 20px; animation: popIn 0.35s ease;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    max-height: 75vh; display: flex; flex-direction: column;
+    background: #fff; border-radius: 16px 16px 0 0; max-height: 55vh;
+    display: flex; flex-direction: column; animation: up 0.25s ease;
   }
-  .cart-panel h2 { text-align: center; font-size: 26px; color: #555; margin-bottom: 6px; }
-  .cart-panel .cart-hint { text-align: center; color: #bbb; font-size: 13px; margin-bottom: 16px; }
-  .cart-list { flex: 1; overflow-y: auto; max-height: 40vh; }
-  .cart-item {
+  @keyframes up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+  .cart-header {
+    padding: 14px 16px; display: flex; justify-content: space-between;
+    align-items: center; border-bottom: 1px solid #f0f0f0;
+  }
+  .cart-header h3 { font-size: 16px; }
+  .cart-header .clear-btn { font-size: 13px; color: #999; background: none; border: none; cursor: pointer; }
+
+  .cart-list { flex: 1; overflow-y: auto; padding: 0 16px; }
+  .cart-row {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 8px; border-bottom: 1px solid #f5f5f5;
+    padding: 10px 0; border-bottom: 1px solid #f9f9f9;
   }
-  .cart-item .info { flex: 1; }
-  .cart-item .name { font-size: 16px; color: #444; }
-  .cart-item .variant { font-size: 12px; color: #aaa; }
-  .btn-remove {
-    background: none; border: none; color: #ccc; font-size: 20px;
-    cursor: pointer; padding: 4px 8px; transition: color 0.2s;
+  .cart-row .c-name { font-size: 14px; color: #333; }
+  .cart-row .c-variant { font-size: 11px; color: #aaa; }
+  .cart-row .c-right { display: flex; align-items: center; gap: 10px; }
+  .btn-minus, .btn-plus {
+    width: 22px; height: 22px; border-radius: 50%; border: 1px solid #ddd;
+    background: #fff; font-size: 14px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; color: #666;
   }
-  .btn-remove:hover { color: #ff6b9d; }
+  .btn-minus:active, .btn-plus:active { background: #f5f5f5; }
+
   .cart-footer {
-    border-top: 1px solid #f0f0f0; padding-top: 14px; margin-top: 10px;
+    padding: 12px 16px 20px; border-top: 1px solid #f0f0f0;
+    display: flex; gap: 10px;
+  }
+  .cart-footer button {
+    flex: 1; border: none; border-radius: 22px; padding: 11px;
+    font-size: 15px; cursor: pointer;
+  }
+  .btn-share { background: #ff6600; color: #fff; }
+  .btn-close-cart { background: #f5f5f5; color: #666; }
+
+  /* 选项弹窗 */
+  .opt-mask {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    z-index: 120; align-items: flex-end; justify-content: center;
+  }
+  .opt-mask.show { display: flex; }
+  .opt-sheet {
+    background: #fff; border-radius: 16px 16px 0 0; width: 100%;
+    max-width: 480px; padding: 8px 16px 24px; animation: up 0.25s ease;
+  }
+  .opt-sheet h4 { text-align: center; font-size: 16px; padding: 12px 0; color: #333; }
+  .opt-row {
     display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 8px; border-bottom: 1px solid #f5f5f5; cursor: pointer;
   }
-  .cart-footer .total { font-size: 18px; color: #ff6b9d; font-weight: bold; }
-  .cart-footer .total small { font-size: 12px; color: #bbb; font-weight: normal; }
-  .btn-close {
-    background: #f5f5f5; color: #888; border: none; border-radius: 25px;
-    padding: 10px 22px; font-family: inherit; font-size: 14px; cursor: pointer;
+  .opt-row.chosen { color: #ff6600; }
+  .opt-dot {
+    width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ddd;
   }
-  .btn-submit {
-    background: linear-gradient(135deg, #ff6b9d, #ff8e8e);
-    color: white; border: none; border-radius: 25px; padding: 10px 22px;
-    font-family: inherit; font-size: 14px; cursor: pointer;
-    box-shadow: 0 4px 15px rgba(255,107,157,0.25);
-  }
-
-  /* 成功动画 */
-  .success-toast {
-    display: none; position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: white; border-radius: 24px; padding: 30px 40px;
-    z-index: 300; text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    animation: popIn 0.4s ease;
-  }
-  .success-toast.show { display: block; }
-  .success-toast .big-emoji { font-size: 70px; animation: bounce 0.6s ease 3; }
-
-  @keyframes popIn {
-    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  .opt-row.chosen .opt-dot { border-color: #ff6600; background: #ff6600; box-shadow: inset 0 0 0 3px #fff; }
+  .opt-confirm {
+    width: 100%; margin-top: 14px; background: #ff6600; color: #fff;
+    border: none; border-radius: 22px; padding: 12px; font-size: 16px; cursor: pointer;
   }
 </style>
 </head>
 <body>
 
-<!-- 飘落装饰已移除 -->
-
-
-<div class="container">
-
-  <!-- 头部 -->
-  <div class="header">
-    <div class="mascot">🐱</div>
-    <h1>我们的菜单</h1>
-    <p class="subtitle">点你想吃的，一起吃</p>
-  </div>
-
-  <!-- 订单栏 -->
-  <div class="order-bar">
-    <div class="count" id="cartCount">0</div>
-    <div class="summary" id="cartSummary"></div>
-    <button class="btn-view" onclick="openCart()">📋 已点</button>
-  </div>
-
-  <!-- ========== 菜品区 ========== -->
-  <div class="category-title"><span>🐟</span>鱼你一起 · 酸菜鱼</div>
-
-  <div class="dish-card" data-dish="suan-1" onclick="toggleDish(this)">
-    <span class="emoji">🍲</span>
-    <div class="name">酸菜鱼 — 青花椒口味</div>
-    <div class="desc">麻香四溢，青花椒的鲜麻浸透嫩滑鱼片</div>
-    <div class="tags"><span class="tag">🌶️ 麻辣</span><span class="tag">鱼你一起</span><span class="tag">+青笋</span></div>
-  </div>
-
-  <div class="dish-card" data-dish="suan-2" onclick="toggleDish(this)">
-    <span class="emoji">🥬</span>
-    <div class="name">酸菜鱼 — 草本口味</div>
-    <div class="desc">清香草本汤底，温和不腻，鱼肉鲜甜</div>
-    <div class="tags"><span class="tag">🌿 清香</span><span class="tag">鱼你一起</span><span class="tag">+青笋</span></div>
-  </div>
-
-  <div class="dish-card" data-dish="shuizhu" onclick="toggleDish(this)">
-    <span class="emoji">🌶️</span>
-    <div class="name">水煮鱼</div>
-    <div class="desc">小四川家，滚油浇上去滋啦一声，麻辣鲜香</div>
-    <div class="tags"><span class="tag">🌶️ 麻辣</span><span class="tag">小四川</span></div>
-  </div>
-
-  <div class="dish-card" data-dish="heiyu" onclick="toggleDish(this)">
-    <span class="emoji">🐟</span>
-    <div class="name">黑鱼三吃</div>
-    <div class="desc">一鱼三吃，片、炸、炖，各有滋味</div>
-    <div class="tags"><span class="tag">🐟 一鱼三吃</span></div>
-  </div>
-
-  <div class="category-title"><span>🦞</span>小龙虾</div>
-
-  <div class="dish-card" data-dish="xiaolongxia" onclick="toggleDish(this)">
-    <span class="emoji">🦞</span>
-    <div class="name">小龙虾</div>
-    <div class="desc">剥壳蘸汤，虾肉弹牙，吃到停不下来</div>
-    <div class="tags"><span class="tag">🦞 过瘾</span></div>
-  </div>
-
-  <div class="category-title"><span>🍲</span>旋转小火锅</div>
-
-  <div class="dish-card" data-dish="huoguo" onclick="toggleDish(this)">
-    <span class="emoji">🍲</span>
-    <div class="name">旋转小火锅</div>
-    <div class="desc">转着吃，想拿啥拿啥，一个人也能涮个痛快</div>
-    <div class="tags"><span class="tag">🍲 自选</span></div>
-  </div>
-
-  <div class="category-title"><span>🍝</span>面食小吃</div>
-
-  <div class="dish-card" data-dish="mian-1" onclick="toggleDish(this)">
-    <span class="emoji">🥘</span>
-    <div class="name">铁锅焖面</div>
-    <div class="desc">面条吸饱浓郁汤汁，焖得软糯入味</div>
-    <div class="tags"><span class="tag">🍖 酱香</span></div>
-  </div>
-
-  <div class="dish-card" data-dish="menzi" onclick="toggleDish(this)">
-    <span class="emoji">🫕</span>
-    <div class="name">付记焖子</div>
-    <div class="desc">外焦里嫩，蘸上蒜汁，一口一个香</div>
-    <div class="tags"><span class="tag">付记</span></div>
-  </div>
-
-  <div class="dish-card" data-dish="jitui" onclick="toggleDish(this)">
-    <span class="emoji">🍗</span>
-    <div class="name">炸鸡腿</div>
-    <div class="desc">外皮酥脆，咬开汁水四溢</div>
-    <div class="tags"><span class="tag">🍗 炸物</span></div>
-  </div>
-
-  <div class="category-title"><span>🥘</span>广东菜</div>
-
-  <div class="dish-card" data-dish="guangdong" onclick="toggleDish(this)">
-    <span class="emoji">🥢</span>
-    <div class="name">广东菜</div>
-    <div class="desc">清淡鲜美，原汁原味</div>
-    <div class="tags"><span class="tag">🥢 粤式</span></div>
-  </div>
-
-  <div class="category-title"><span>🔥</span>毛血旺</div>
-
-  <div class="dish-card" data-dish="xue-1" onclick="toggleDish(this)">
-    <span class="emoji">🩸</span>
-    <div class="name">毛血旺</div>
-    <div class="desc">红油翻滚，鸭血嫩滑，毛肚爽脆</div>
-    <div class="tags"><span class="tag">🌶️🌶️ 重辣</span></div>
-  </div>
-
-  <div class="category-title"><span>🍧</span>甜品</div>
-
-  <div class="dish-card" data-dish="baobing" onclick="toggleDish(this)">
-    <span class="emoji">🍧</span>
-    <div class="name">刨冰</div>
-    <div class="desc">夏天来一碗，冰爽透心凉</div>
-    <div class="tags"><span class="tag">🍧 冰品</span></div>
-  </div>
-
-  <div style="height: 40px;"></div>
+<div class="topbar">
+  <h1>我们的菜单</h1>
+  <button class="cart-btn" onclick="openCart()">
+    🛒 <span class="badge" id="topBadge">0</span>
+  </button>
 </div>
 
-<!-- 口味选择弹窗 -->
-<div class="option-popup" id="optionPopup">
-  <div class="option-sheet">
-    <h3 id="optionTitle">选个口味吧～</h3>
-    <div id="optionList"></div>
-    <button class="btn-confirm" onclick="confirmOption()">🍽️ 就这个，加入菜单！</button>
-    <button style="display:block;width:100%;background:none;border:none;color:#bbb;font-family:inherit;font-size:14px;padding:12px;cursor:pointer;margin-top:4px;" onclick="closeOption()">算了，先不加了</button>
+<div class="main">
+  <!-- 左侧分类 -->
+  <div class="sidebar" id="sidebar"></div>
+
+  <!-- 右侧列表 -->
+  <div class="content" id="content"></div>
+</div>
+
+<!-- 加料弹窗 -->
+<div class="opt-mask" id="optMask">
+  <div class="opt-sheet">
+    <h4 id="optTitle"></h4>
+    <div id="optList"></div>
+    <button class="opt-confirm" onclick="confirmOpt()">加入</button>
   </div>
 </div>
 
 <!-- 购物车弹窗 -->
-<div class="cart-popup" id="cartPopup">
+<div class="cart-mask" id="cartMask">
   <div class="cart-panel">
-    <h2>🛒 已点菜单</h2>
-    <p class="cart-hint"></p>
+    <div class="cart-header">
+      <h3>已点菜单</h3>
+      <button class="clear-btn" onclick="clearCart()">清空</button>
+    </div>
     <div class="cart-list" id="cartList"></div>
     <div class="cart-footer">
-      <span class="total">共 <span id="cartTotal">0</span> 道</span>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-close" onclick="closeCart()">继续</button>
-        <button class="btn-submit" onclick="submitOrder()">📨 分享给对方</button>
-      </div>
+      <button class="btn-close-cart" onclick="closeCart()">继续点</button>
+      <button class="btn-share" onclick="shareCart()">📨 分享给对方</button>
     </div>
   </div>
 </div>
 
-<!-- 成功提示 -->
-<div class="success-toast" id="successToast">
-  <div class="big-emoji">💌</div>
-  <p style="font-size:20px;color:#555;margin:12px 0;">点单成功！</p>
-  <p style="font-size:14px;color:#aaa;">快去告诉宝贝吧～</p>
-  <button style="background:linear-gradient(135deg,#ff6b9d,#ff8e8e);color:white;border:none;border-radius:25px;padding:10px 30px;font-family:inherit;font-size:15px;cursor:pointer;margin-top:10px;" onclick="closeToast()">好哒 ❤️</button>
-</div>
-
 <script>
-// ========== 状态管理 ==========
-const menu = {
-  'suan-1': { name: '酸菜鱼 — 青花椒口味', emoji: '🍲', category: '鱼你一起' },
-  'suan-2': { name: '酸菜鱼 — 草本口味', emoji: '🥬', category: '鱼你一起' },
-  'shuizhu': { name: '水煮鱼', emoji: '🌶️', category: '小四川' },
-  'heiyu': { name: '黑鱼三吃', emoji: '🐟', category: '鱼' },
-  'xiaolongxia': { name: '小龙虾', emoji: '🦞', category: '小龙虾' },
-  'huoguo': { name: '旋转小火锅', emoji: '🍲', category: '火锅' },
-  'mian-1': { name: '铁锅焖面', emoji: '🥘', category: '面食' },
-  'menzi': { name: '付记焖子', emoji: '🫕', category: '面食小吃' },
-  'jitui': { name: '炸鸡腿', emoji: '🍗', category: '面食小吃' },
-  'guangdong': { name: '广东菜', emoji: '🥢', category: '粤菜' },
-  'xue-1': { name: '毛血旺', emoji: '🩸', category: '毛血旺' },
-  'baobing': { name: '刨冰', emoji: '🍧', category: '甜品' },
-};
+// ======== 菜单数据 ========
+const categories = [
+  { id: 'fish', name: '🐟 鱼', items: [
+    { key: 'suan-1', name: '酸菜鱼·青花椒', desc: '鱼你一起 · 麻辣鲜香', tags: ['+青笋'], emoji: '🫧', needOpt: true },
+    { key: 'suan-2', name: '酸菜鱼·草本', desc: '鱼你一起 · 清香不腻', tags: ['+青笋'], emoji: '🥬', needOpt: true },
+    { key: 'shuizhu', name: '水煮鱼', desc: '小四川 · 滚油浇淋', tags: ['麻辣'], emoji: '🌶️' },
+    { key: 'heiyu', name: '黑鱼三吃', desc: '一鱼三吃各有滋味', tags: [], emoji: '🐟' },
+  ]},
+  { id: 'lx', name: '🦞 龙虾', items: [
+    { key: 'xiaolongxia', name: '小龙虾', desc: '剥壳蘸汤虾肉弹牙', tags: [], emoji: '🦞' },
+  ]},
+  { id: 'hotpot', name: '🍲 火锅', items: [
+    { key: 'huoguo', name: '旋转小火锅', desc: '自选自涮一人一锅', tags: [], emoji: '🍲' },
+  ]},
+  { id: 'snack', name: '🍜 小吃', items: [
+    { key: 'mian-1', name: '铁锅焖面', desc: '酱香浓郁焖得入味', tags: [], emoji: '🥘' },
+    { key: 'menzi', name: '付记焖子', desc: '外焦里嫩蘸蒜汁', tags: ['付记'], emoji: '🫕' },
+    { key: 'jitui', name: '炸鸡腿', desc: '外酥里嫩汁水四溢', tags: [], emoji: '🍗' },
+  ]},
+  { id: 'gd', name: '🥢 粤菜', items: [
+    { key: 'guangdong', name: '广东菜', desc: '清淡鲜美原汁原味', tags: [], emoji: '🥢' },
+  ]},
+  { id: 'mxw', name: '🔥 毛血旺', items: [
+    { key: 'xue-1', name: '毛血旺', desc: '鸭血嫩滑毛肚爽脆', tags: ['重辣'], emoji: '🩸' },
+  ]},
+  { id: 'dessert', name: '🍧 甜品', items: [
+    { key: 'baobing', name: '刨冰', desc: '冰爽透心凉', tags: [], emoji: '🍧' },
+  ]},
+];
 
-let cart = [];           // [{id, dishKey, variant}]
-let pendingDish = null; // 正在选口味的菜
+let cart = {};
+let pendingKey = null;
 
-// ========== 渲染 ==========
-function updateCartUI() {
-  const count = cart.length;
-  document.getElementById('cartCount').textContent = count;
-
-  const summary = document.getElementById('cartSummary');
-  if (count === 0) {
-    summary.textContent = '还没点菜';
-  } else if (count === 1) {
-    summary.textContent = '已选 1 道';
-  } else {
-    summary.textContent = `已选 ${count} 道`;
-  }
-
-  // 卡片选中态
-  document.querySelectorAll('.dish-card').forEach(card => {
-    const key = card.dataset.dish;
-    const inCart = cart.some(item => item.dishKey === key);
-    card.classList.toggle('selected', inCart);
-  });
-
-  renderCartList();
+// ======== 渲染 ========
+function buildSidebar() {
+  const el = document.getElementById('sidebar');
+  el.innerHTML = categories.map((c, i) =>
+    `<div class="cat ${i===0?'active':''}" data-id="${c.id}" onclick="scrollToCat('${c.id}', this)">${c.name}</div>`
+  ).join('');
 }
 
-function renderCartList() {
-  const list = document.getElementById('cartList');
-  document.getElementById('cartTotal').textContent = cart.length;
-
-  if (cart.length === 0) {
-    list.innerHTML = `<div style="text-align:center;padding:30px;color:#ccc;">
-      <div style="font-size:48px;">🍽️</div>
-      <p style="margin-top:8px;">还没选菜</p>
-    </div>`;
-    return;
-  }
-
-  list.innerHTML = cart.map((item, idx) => {
-    const dish = menu[item.dishKey];
-    const variantText = item.variant ? ` · ${item.variant}` : '';
-    return `
-      <div class="cart-item">
-        <span style="font-size:32px;">${dish.emoji}</span>
-        <div class="info" style="margin-left:10px;">
-          <div class="name">${dish.name}${variantText}</div>
-          <div class="variant">${dish.category}</div>
-        </div>
-        <button class="btn-remove" onclick="removeFromCart(${idx})" title="移除">✕</button>
-      </div>
-    `;
-  }).join('');
-}
-
-// ========== 操作 ==========
-function toggleDish(card) {
-  const key = card.dataset.dish;
-  const alreadyInCart = cart.findIndex(item => item.dishKey === key);
-
-  if (alreadyInCart >= 0) {
-    // 已经在购物车，移除
-    cart.splice(alreadyInCart, 1);
-    updateCartUI();
-    shakeElement(card);
-    return;
-  }
-
-  // 酸菜鱼需要选口味
-  if (key === 'suan-1' || key === 'suan-2') {
-    showOption(key);
-  } else {
-    addToCart(key, '');
-  }
-}
-
-function showOption(dishKey) {
-  pendingDish = dishKey;
-  const dish = menu[dishKey];
-  document.getElementById('optionTitle').textContent = `「${dish.name}」加料选择`;
-  document.getElementById('optionList').innerHTML = `
-    <div class="option-item chosen" onclick="selectOption(this, '含青笋')">
-      <span class="option-emoji">🎋</span>
-      <span style="flex:1;font-size:16px;">加一份青笋（默认）</span>
-      <div class="option-radio"></div>
+function buildContent() {
+  const el = document.getElementById('content');
+  el.innerHTML = categories.map(c => `
+    <div class="section" id="sec-${c.id}">
+      <div class="section-title">${c.name}</div>
+      ${c.items.map(item => renderDish(item)).join('')}
     </div>
-    <div class="option-item" onclick="selectOption(this, '不加青笋')">
-      <span class="option-emoji">🐟</span>
-      <span style="flex:1;font-size:16px;">不加青笋，纯鱼纯酸菜</span>
-      <div class="option-radio"></div>
+  `).join('');
+}
+
+function renderDish(item) {
+  const count = cart[item.key] || 0;
+  const sel = count > 0 ? ' selected' : '';
+  const added = count > 0 ? ' added' : '';
+  const needOpt = item.needOpt ? ' data-opt="1"' : '';
+  return `
+    <div class="dish-item${sel}" data-key="${item.key}"${needOpt} onclick="clickDish('${item.key}', this)">
+      <div class="dish-img">${item.emoji}</div>
+      <div class="dish-info">
+        <div class="name">${item.name}</div>
+        <div class="desc">${item.desc}</div>
+        ${item.tags.length ? `<div class="tags">${item.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>` : ''}
+      </div>
+      <div class="dish-action">
+        <div class="btn-add${added}">${count > 0 ? `<span class="count-num">${count}</span>` : '+'}</div>
+      </div>
+    </div>`;
+}
+
+function updateAll() {
+  // 更新所有菜品显示
+  document.querySelectorAll('.dish-item').forEach(el => {
+    const key = el.dataset.key;
+    const count = cart[key] || 0;
+    el.classList.toggle('selected', count > 0);
+    const btn = el.querySelector('.btn-add');
+    btn.classList.toggle('added', count > 0);
+    btn.innerHTML = count > 0 ? `<span class="count-num">${count}</span>` : '+';
+  });
+  updateBadge();
+}
+
+function updateBadge() {
+  const total = Object.values(cart).reduce((s, v) => s + v, 0);
+  document.getElementById('topBadge').textContent = total;
+}
+
+// ======== 交互 ========
+function clickDish(key, el) {
+  const item = findItem(key);
+  if (item && item.needOpt && !cart[key]) {
+    showOpt(key);
+  } else {
+    toggleItem(key);
+  }
+}
+
+function toggleItem(key) {
+  if (cart[key]) {
+    delete cart[key];
+  } else {
+    cart[key] = 1;
+  }
+  updateAll();
+}
+
+function findItem(key) {
+  for (const c of categories) {
+    for (const item of c.items) {
+      if (item.key === key) return item;
+    }
+  }
+  return null;
+}
+
+// ======== 加料弹窗 ========
+function showOpt(key) {
+  pendingKey = key;
+  const item = findItem(key);
+  document.getElementById('optTitle').textContent = item.name + ' · 加料';
+  document.getElementById('optList').innerHTML = `
+    <div class="opt-row chosen" onclick="selectOpt(this, '含青笋')">
+      <span>🎋 加青笋</span><div class="opt-dot"></div>
+    </div>
+    <div class="opt-row" onclick="selectOpt(this, '不加')">
+      <span>🐟 不加</span><div class="opt-dot"></div>
     </div>
   `;
-  document.getElementById('optionPopup').classList.add('show');
+  document.getElementById('optMask').classList.add('show');
 }
 
-function selectOption(el, variant) {
-  document.querySelectorAll('#optionList .option-item').forEach(i => i.classList.remove('chosen'));
+function selectOpt(el, variant) {
+  document.querySelectorAll('#optList .opt-row').forEach(r => r.classList.remove('chosen'));
   el.classList.add('chosen');
   el._variant = variant;
 }
 
-function confirmOption() {
-  const chosen = document.querySelector('#optionList .option-item.chosen');
+function confirmOpt() {
+  const chosen = document.querySelector('#optList .opt-row.chosen');
   const variant = chosen ? (chosen._variant || '含青笋') : '含青笋';
-  addToCart(pendingDish, variant);
-  closeOption();
+  cart[pendingKey] = { count: 1, variant };
+  pendingKey = null;
+  document.getElementById('optMask').classList.remove('show');
+  updateAll();
 }
 
-function closeOption() {
-  document.getElementById('optionPopup').classList.remove('show');
-  pendingDish = null;
+// ======== 分类联动 ========
+function scrollToCat(id, el) {
+  document.getElementById('sec-' + id).scrollIntoView({ behavior: 'smooth' });
+  document.querySelectorAll('.sidebar .cat').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
 }
 
-function addToCart(dishKey, variant) {
-  // 防重复
-  if (cart.some(item => item.dishKey === dishKey && item.variant === variant)) return;
-
-  cart.push({ dishKey, variant, id: Date.now() });
-  updateCartUI();
-}
-
-function removeFromCart(idx) {
-  cart.splice(idx, 1);
-  updateCartUI();
-}
-
-function shakeElement(el) {
-  el.style.animation = 'none';
-  el.offsetHeight;
-  el.style.animation = '';
-}
-
-// ========== 弹窗 ==========
-function openCart() {
-  document.getElementById('cartPopup').classList.add('show');
-  renderCartList();
-}
-function closeCart() {
-  document.getElementById('cartPopup').classList.remove('show');
-}
-function closeToast() {
-  document.getElementById('successToast').classList.remove('show');
-}
-
-function submitOrder() {
-  if (cart.length === 0) return;
-  document.getElementById('cartPopup').classList.remove('show');
-
-  // 把订单编码到链接里
-  const data = cart.map(item => `${item.dishKey}:${encodeURIComponent(item.variant)}`).join(',');
-  const hash = btoa(unescape(encodeURIComponent(data)));
-  const shareUrl = window.location.origin + window.location.pathname + '#order=' + hash;
-
-  // 生成微信文案
-  const lines = cart.map(item => {
-    const dish = menu[item.dishKey];
-    const v = item.variant ? `（${item.variant}）` : '';
-    return `${dish.emoji} ${dish.name}${v}`;
-  });
-  const shareText = `🍽️ 点了这些：\n\n${lines.join('\n')}\n\n🔗 一起看：\n${shareUrl}`;
-
-  // 复制到剪贴板
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(shareText).then(() => {
-      showShareToast(shareUrl);
-    }).catch(() => {
-      showShareToast(shareUrl);
+// 滚动时自动高亮分类
+document.addEventListener('DOMContentLoaded', () => {
+  const content = document.getElementById('content');
+  content.addEventListener('scroll', () => {
+    const sections = document.querySelectorAll('.section');
+    const cats = document.querySelectorAll('.sidebar .cat');
+    let current = sections[0]?.id;
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top <= 100) current = sec.id;
     });
-  } else {
-    showShareToast(shareUrl);
+    cats.forEach(c => c.classList.toggle('active', c.dataset.id === current?.replace('sec-', '')));
+  });
+});
+
+// ======== 购物车 ========
+function openCart() { renderCart(); document.getElementById('cartMask').classList.add('show'); }
+function closeCart() { document.getElementById('cartMask').classList.remove('show'); }
+function clearCart() { cart = {}; updateAll(); closeCart(); }
+
+function renderCart() {
+  const list = document.getElementById('cartList');
+  const entries = [];
+  for (const [key, val] of Object.entries(cart)) {
+    const item = findItem(key);
+    if (!item) continue;
+    const count = typeof val === 'object' ? val.count : val;
+    const variant = typeof val === 'object' ? val.variant : '';
+    entries.push({ key, item, count, variant });
   }
+  if (!entries.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:#ccc;">还没点菜</div>';
+    return;
+  }
+  list.innerHTML = entries.map(e => `
+    <div class="cart-row">
+      <div>
+        <div class="c-name">${e.item.emoji} ${e.item.name}${e.variant ? ' · '+e.variant : ''}</div>
+        <div class="c-variant">${e.item.desc}</div>
+      </div>
+      <div class="c-right">
+        <button class="btn-minus" onclick="changeCount('${e.key}', -1)">−</button>
+        <span style="min-width:20px;text-align:center;">${e.count}</span>
+        <button class="btn-plus" onclick="changeCount('${e.key}', 1)">+</button>
+      </div>
+    </div>
+  `).join('');
 }
 
-function showShareToast(url) {
-  const toast = document.getElementById('successToast');
-  toast.innerHTML = `
-    <div class="big-emoji">📋</div>
-    <p style="font-size:18px;color:#555;margin:12px 0;">已复制到剪贴板</p>
-    <p style="font-size:13px;color:#aaa;line-height:1.8;">
-      去<b style="color:#ff6b9d;">微信</b>粘贴发给对方<br>
-      对方点开链接就能看到你点的菜<br>
-    </p>
-    <button style="background:linear-gradient(135deg,#ff6b9d,#ff8e8e);color:white;border:none;border-radius:25px;padding:10px 30px;font-family:inherit;font-size:15px;cursor:pointer;margin-top:10px;" onclick="closeToast()">好</button>
-  `;
-  toast.classList.add('show');
-  setTimeout(() => { toast.classList.remove('show'); }, 5000);
+function changeCount(key, delta) {
+  const val = cart[key];
+  const count = typeof val === 'object' ? val.count : val;
+  const newCount = count + delta;
+  if (newCount <= 0) {
+    delete cart[key];
+  } else if (typeof val === 'object') {
+    cart[key] = { ...val, count: newCount };
+  } else {
+    cart[key] = newCount;
+  }
+  updateAll();
+  renderCart();
 }
 
-// ========== 加载分享的订单 ==========
-function loadOrderFromHash() {
-  const hash = window.location.hash;
+function shareCart() {
+  const entries = [];
+  for (const [key, val] of Object.entries(cart)) {
+    const item = findItem(key);
+    if (!item) continue;
+    const count = typeof val === 'object' ? val.count : val;
+    const variant = typeof val === 'object' ? val.variant : '';
+    entries.push({ key, item, count, variant });
+  }
+  if (!entries.length) return;
+
+  const data = entries.map(e => `${e.key}:${e.count}:${encodeURIComponent(e.variant)}`).join(',');
+  const hash = btoa(unescape(encodeURIComponent(data)));
+  const shareUrl = location.origin + location.pathname + '#order=' + hash;
+
+  const lines = entries.map(e => `${e.item.emoji} ${e.item.name}${e.variant?' · '+e.variant:''} ×${e.count}`);
+  const text = `🍽️ 点了：\n${lines.join('\n')}\n\n🔗 ${shareUrl}`;
+  navigator.clipboard?.writeText(text);
+  alert('已复制，去微信粘贴发给对方吧');
+}
+
+// 加载分享订单
+(function loadOrder() {
+  const hash = location.hash;
   if (!hash.startsWith('#order=')) return;
-
   try {
-    const encoded = hash.replace('#order=', '');
-    const data = decodeURIComponent(escape(atob(encoded)));
-    const items = data.split(',');
-    cart = [];
-
-    items.forEach(pair => {
-      const [dishKey, variantEncoded] = pair.split(':');
-      const variant = variantEncoded ? decodeURIComponent(variantEncoded) : '';
-      if (menu[dishKey]) {
-        cart.push({ dishKey, variant, id: Date.now() + Math.random() });
+    const data = decodeURIComponent(escape(atob(hash.replace('#order=', ''))));
+    cart = {};
+    data.split(',').forEach(pair => {
+      const [key, countStr, variantEnc] = pair.split(':');
+      const count = parseInt(countStr) || 1;
+      const variant = variantEnc ? decodeURIComponent(variantEnc) : '';
+      if (variant) {
+        cart[key] = { count, variant };
+      } else {
+        cart[key] = count;
       }
     });
+    history.replaceState(null, '', location.pathname);
+    alert('收到菜单！看看想吃啥～');
+  } catch(e) {}
+})();
 
-    updateCartUI();
+// 初始化
+buildSidebar();
+buildContent();
+updateBadge();
 
-    // 显示一个提示：收到宝贝的菜单啦
-    setTimeout(() => {
-      const toast = document.getElementById('successToast');
-      toast.innerHTML = `
-        <div class="big-emoji">💌</div>
-        <p style="font-size:18px;color:#555;margin:12px 0;">收到对方菜单</p>
-        <p style="font-size:13px;color:#aaa;">看看想吃啥，加完发回去</p>
-        <button style="background:linear-gradient(135deg,#ff6b9d,#ff8e8e);color:white;border:none;border-radius:25px;padding:10px 30px;font-family:inherit;font-size:15px;cursor:pointer;margin-top:10px;" onclick="closeToast()">好</button>
-      `;
-      toast.classList.add('show');
-      setTimeout(() => { toast.classList.remove('show'); }, 4000);
-    }, 500);
-
-    // 清除 hash（不刷新页面），方便后续再分享
-    history.replaceState(null, '', window.location.pathname);
-  } catch(e) {
-    console.log('订单加载失败，就当新开吧～');
-  }
-}
-
-// 点击弹窗外部关闭
-document.getElementById('optionPopup').addEventListener('click', function(e) {
-  if (e.target === this) closeOption();
-});
-document.getElementById('cartPopup').addEventListener('click', function(e) {
-  if (e.target === this) closeCart();
-});
-
-loadOrderFromHash();
-updateCartUI();
+// 弹窗外部点击关闭
+document.getElementById('optMask').addEventListener('click', function(e) { if (e.target===this) { this.classList.remove('show'); pendingKey=null; }});
+document.getElementById('cartMask').addEventListener('click', function(e) { if (e.target===this) closeCart(); });
 </script>
 </body>
 </html>
