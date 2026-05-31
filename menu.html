@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍽️ 宝贝专属菜单</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+    background: linear-gradient(135deg, #fff5f5 0%, #fce4ec 25%, #f3e5f5 50%, #e8eaf6 75%, #fff5f5 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 12s ease infinite;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* 飘落装饰 */
+  .floating-decor {
+    position: fixed; pointer-events: none; z-index: 0;
+    font-size: 24px; animation: floatUp 8s ease-in infinite; opacity: 0.6;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  .container {
+    max-width: 520px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 头部 */
+  .header {
+    text-align: center;
+    padding: 30px 20px 20px;
+    position: relative;
+  }
+  .header .mascot {
+    font-size: 80px;
+    animation: bounce 1.2s ease infinite;
+    display: inline-block;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-18px); }
+  }
+  .header h1 {
+    font-size: 36px;
+    background: linear-gradient(135deg, #ff6b9d, #c471f5, #ff6b9d);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s ease infinite;
+    margin: 8px 0;
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .header .subtitle {
+    color: #999; font-size: 15px; letter-spacing: 2px;
+  }
+
+  /* 订单摘要栏 */
+  .order-bar {
+    background: white; border-radius: 20px; padding: 14px 20px;
+    box-shadow: 0 4px 20px rgba(255, 107, 157, 0.12);
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px;
+    position: sticky; top: 10px; z-index: 10;
+    backdrop-filter: blur(10px);
+    border: 2px dashed #ffc0cb;
+  }
+  .order-bar .count {
+    background: linear-gradient(135deg, #ff6b9d, #ff8e8e);
+    color: white; border-radius: 50%; width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: bold; box-shadow: 0 3px 10px rgba(255,107,157,0.3);
+  }
+  .order-bar .summary { flex: 1; margin-left: 12px; color: #666; font-size: 14px; }
+  .order-bar .btn-view {
+    background: linear-gradient(135deg, #ff6b9d, #ff8e8e);
+    color: white; border: none; border-radius: 25px; padding: 10px 20px;
+    font-family: inherit; font-size: 14px; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255,107,157,0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .order-bar .btn-view:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255,107,157,0.35); }
+  .order-bar .btn-view:active { transform: scale(0.95); }
+
+  /* 分类标题 */
+  .category-title {
+    font-size: 22px; color: #555;
+    margin: 24px 0 12px; padding-left: 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .category-title span { font-size: 28px; }
+
+  /* 菜品卡片 */
+  .dish-card {
+    background: white;
+    border-radius: 22px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: transform 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+  }
+  .dish-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255,107,157,0.15);
+    border-color: #ffc0cb;
+  }
+  .dish-card:active { transform: scale(0.97); }
+  .dish-card.selected {
+    border-color: #ff6b9d;
+    background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+    box-shadow: 0 6px 25px rgba(255,107,157,0.2);
+  }
+  .dish-card.selected::after {
+    content: '✓';
+    position: absolute; top: 12px; right: 16px;
+    font-size: 20px; color: #ff6b9d;
+    animation: popIn 0.3s ease;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  .dish-card .emoji { font-size: 48px; margin-bottom: 6px; display: block; }
+  .dish-card .name { font-size: 20px; font-weight: bold; color: #444; margin-bottom: 4px; }
+  .dish-card .desc { font-size: 13px; color: #aaa; line-height: 1.5; }
+  .dish-card .tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .dish-card .tag {
+    background: #fff0f3; color: #ff6b9d; border-radius: 20px;
+    padding: 3px 12px; font-size: 12px;
+  }
+
+  /* 选项弹出 */
+  .option-popup {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4); z-index: 100;
+    backdrop-filter: blur(3px);
+    justify-content: center; align-items: flex-end;
+  }
+  .option-popup.show { display: flex; }
+  .option-sheet {
+    background: white; border-radius: 28px 28px 0 0;
+    width: 100%; max-width: 520px; padding: 8px 20px 30px;
+    animation: slideUp 0.35s ease;
+    max-height: 70vh; overflow-y: auto;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .option-sheet h3 { text-align: center; font-size: 22px; color: #555; padding: 16px 0; }
+  .option-sheet .option-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 8px; border-bottom: 1px solid #f5f5f5;
+    cursor: pointer; border-radius: 14px; transition: background 0.2s;
+  }
+  .option-sheet .option-item:hover { background: #fff5f7; }
+  .option-sheet .option-item.chosen { background: #fff0f3; border-radius: 14px; }
+  .option-sheet .option-emoji { font-size: 36px; margin-right: 12px; }
+  .option-radio {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid #ddd; flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .option-item.chosen .option-radio {
+    border-color: #ff6b9d; background: #ff6b9d;
+    box-shadow: inset 0 0 0 4px white;
+  }
+  .btn-confirm {
+    display: block; width: 100%; margin-top: 16px;
+    background: linear-gradient(135deg, #ff6b9d, #ff8e8e);
+    color: white; border: none; border-radius: 28px;
+    padding: 14px; font-family: inherit; font-size: 18px;
+    cursor: pointer; box-shadow: 0 6px 20px rgba(255,107,157,0.3);
+    transition: transform 0.2s;
+  }
+  .btn-confirm:hover { transform: scale(1.02); }
+  .btn-confirm:active { transform: scale(0.96); }
+
+  /* 购物车弹窗 */
+  .cart-popup {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4); z-index: 200;
+    backdrop-filter: blur(3px);
+    justify-content: center; align-items: center;
+  }
+  .cart-popup.show { display: flex; }
+  .cart-panel {
+    background: white; border-radius: 28px; width: 92%; max-width: 440px;
+    padding: 24px 20px; animation: popIn 0.35s ease;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    max-height: 75vh; display: flex; flex-direction: column;
+  }
+  .cart-panel h2 { text-align: center; font-size: 26px; color: #555; margin-bottom: 6px; }
+  .cart-panel .cart-hint { text-align: center; color: #bbb; font-size: 13px; margin-bottom: 16px; }
+  .cart-list { flex: 1; overflow-y: auto; max-height: 40vh; }
+  .cart-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 8px; border-bottom: 1px solid #f5f5f5;
+  }
+  .cart-item .info { flex: 1; }
+  .cart-item .name { font-size: 16px; color: #444; }
+  .cart-item .variant { font-size: 12px; color: #aaa; }
+  .btn-remove {
+    background: none; border: none; color: #ccc; font-size: 20px;
+    cursor: pointer; padding: 4px 8px; transition: color 0.2s;
+  }
+  .btn-remove:hover { color: #ff6b9d; }
+  .cart-footer {
+    border-top: 1px solid #f0f0f0; padding-top: 14px; margin-top: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cart-footer .total { font-size: 18px; color: #ff6b9d; font-weight: bold; }
+  .cart-footer .total small { font-size: 12px; color: #bbb; font-weight: normal; }
+  .btn-close {
+    background: #f5f5f5; color: #888; border: none; border-radius: 25px;
+    padding: 10px 22px; font-family: inherit; font-size: 14px; cursor: pointer;
+  }
+  .btn-submit {
+    background: linear-gradient(135deg, #ff6b9d, #ff8e8e);
+    color: white; border: none; border-radius: 25px; padding: 10px 22px;
+    font-family: inherit; font-size: 14px; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255,107,157,0.25);
+  }
+
+  /* 成功动画 */
+  .success-toast {
+    display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: white; border-radius: 24px; padding: 30px 40px;
+    z-index: 300; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    animation: popIn 0.4s ease;
+  }
+  .success-toast.show { display: block; }
+  .success-toast .big-emoji { font-size: 70px; animation: bounce 0.6s ease 3; }
+
+  @keyframes popIn {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 飘落装饰 -->
+<div class="floating-decor" style="left:5%; animation-delay:0s;">🌸</div>
+<div class="floating-decor" style="left:15%; animation-delay:2s;">🍜</div>
+<div class="floating-decor" style="left:25%; animation-delay:4s;">🐟</div>
+<div class="floating-decor" style="left:70%; animation-delay:1s;">✨</div>
+<div class="floating-decor" style="left:80%; animation-delay:3s;">🫧</div>
+<div class="floating-decor" style="left:90%; animation-delay:5s;">💕</div>
+<div class="floating-decor" style="left:45%; animation-delay:6s;">🌶️</div>
+
+<div class="container">
+
+  <!-- 头部 -->
+  <div class="header">
+    <div class="mascot">🐱</div>
+    <h1>宝贝专属菜单</h1>
+    <p class="subtitle">✨ 点你想吃的，我陪你吃 ✨</p>
+  </div>
+
+  <!-- 订单栏 -->
+  <div class="order-bar">
+    <div class="count" id="cartCount">0</div>
+    <div class="summary" id="cartSummary">还没点菜呢～</div>
+    <button class="btn-view" onclick="openCart()">📋 看看点了啥</button>
+  </div>
+
+  <!-- ========== 菜品区 ========== -->
+  <div class="category-title"><span>🐟</span>鱼你一起 · 酸菜鱼</div>
+
+  <div class="dish-card" data-dish="suan-1" onclick="toggleDish(this)">
+    <span class="emoji">🍲</span>
+    <div class="name">酸菜鱼 — 青花椒口味</div>
+    <div class="desc">麻香四溢，青花椒的鲜麻浸透嫩滑鱼片，配一口酸爽的酸菜，绝了！</div>
+    <div class="tags"><span class="tag">🌶️ 麻辣</span><span class="tag">招牌必点</span><span class="tag">+青笋</span></div>
+  </div>
+
+  <div class="dish-card" data-dish="suan-2" onclick="toggleDish(this)">
+    <span class="emoji">🥬</span>
+    <div class="name">酸菜鱼 — 草本口味</div>
+    <div class="desc">清香草本汤底，温和不腻，鱼肉鲜甜，喝一口汤整个人都暖了～</div>
+    <div class="tags"><span class="tag">🌿 清香</span><span class="tag">经典之选</span><span class="tag">+青笋</span></div>
+  </div>
+
+  <div class="category-title"><span>🍝</span>焖面</div>
+
+  <div class="dish-card" data-dish="mian-1" onclick="toggleDish(this)">
+    <span class="emoji">🥘</span>
+    <div class="name">铁锅焖面</div>
+    <div class="desc">面条吸饱浓郁汤汁，焖得软糯入味，每一根都裹满酱香～</div>
+    <div class="tags"><span class="tag">🍖 酱香浓郁</span><span class="tag">碳水快乐</span></div>
+  </div>
+
+  <div class="category-title"><span>🔥</span>毛血旺</div>
+
+  <div class="dish-card" data-dish="xue-1" onclick="toggleDish(this)">
+    <span class="emoji">🩸</span>
+    <div class="name">毛血旺</div>
+    <div class="desc">红油翻滚，鸭血嫩滑，毛肚爽脆，一口下去浑身冒汗的爽！</div>
+    <div class="tags"><span class="tag">🌶️🌶️ 重辣</span><span class="tag">过瘾之选</span></div>
+  </div>
+
+  <div style="height: 40px;"></div>
+</div>
+
+<!-- 口味选择弹窗 -->
+<div class="option-popup" id="optionPopup">
+  <div class="option-sheet">
+    <h3 id="optionTitle">选个口味吧～</h3>
+    <div id="optionList"></div>
+    <button class="btn-confirm" onclick="confirmOption()">🍽️ 就这个，加入菜单！</button>
+    <button style="display:block;width:100%;background:none;border:none;color:#bbb;font-family:inherit;font-size:14px;padding:12px;cursor:pointer;margin-top:4px;" onclick="closeOption()">算了，先不加了</button>
+  </div>
+</div>
+
+<!-- 购物车弹窗 -->
+<div class="cart-popup" id="cartPopup">
+  <div class="cart-panel">
+    <h2>🛒 我们的菜单</h2>
+    <p class="cart-hint">看看今天想吃啥～</p>
+    <div class="cart-list" id="cartList"></div>
+    <div class="cart-footer">
+      <span class="total">共 <span id="cartTotal">0</span> 道菜 <small>（看着就馋 😋）</small></span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-close" onclick="closeCart()">继续逛</button>
+        <button class="btn-submit" onclick="submitOrder()">📨 告诉他/她</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 成功提示 -->
+<div class="success-toast" id="successToast">
+  <div class="big-emoji">💌</div>
+  <p style="font-size:20px;color:#555;margin:12px 0;">点单成功！</p>
+  <p style="font-size:14px;color:#aaa;">快去告诉宝贝吧～</p>
+  <button style="background:linear-gradient(135deg,#ff6b9d,#ff8e8e);color:white;border:none;border-radius:25px;padding:10px 30px;font-family:inherit;font-size:15px;cursor:pointer;margin-top:10px;" onclick="closeToast()">好哒 ❤️</button>
+</div>
+
+<script>
+// ========== 状态管理 ==========
+const menu = {
+  'suan-1': { name: '酸菜鱼 — 青花椒口味', emoji: '🍲', variant: '默认（含青笋）', category: '鱼你一起', basePrice: '招牌' },
+  'suan-2': { name: '酸菜鱼 — 草本口味', emoji: '🥬', variant: '默认（含青笋）', category: '鱼你一起', basePrice: '经典' },
+  'mian-1': { name: '铁锅焖面', emoji: '🥘', variant: '', category: '焖面', basePrice: '' },
+  'xue-1': { name: '毛血旺', emoji: '🩸', variant: '', category: '毛血旺', basePrice: '' },
+};
+
+let cart = [];           // [{id, dishKey, variant}]
+let pendingDish = null; // 正在选口味的菜
+
+// ========== 渲染 ==========
+function updateCartUI() {
+  const count = cart.length;
+  document.getElementById('cartCount').textContent = count;
+
+  const summary = document.getElementById('cartSummary');
+  if (count === 0) {
+    summary.textContent = '还没点菜呢～';
+  } else if (count === 1) {
+    summary.textContent = '已选 1 道美味～';
+  } else {
+    summary.textContent = `已选 ${count} 道美味～`;
+  }
+
+  // 卡片选中态
+  document.querySelectorAll('.dish-card').forEach(card => {
+    const key = card.dataset.dish;
+    const inCart = cart.some(item => item.dishKey === key);
+    card.classList.toggle('selected', inCart);
+  });
+
+  renderCartList();
+}
+
+function renderCartList() {
+  const list = document.getElementById('cartList');
+  document.getElementById('cartTotal').textContent = cart.length;
+
+  if (cart.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:30px;color:#ccc;">
+      <div style="font-size:60px;">🍽️</div>
+      <p style="margin-top:8px;">菜单空空哒，去选好吃的吧～</p>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = cart.map((item, idx) => {
+    const dish = menu[item.dishKey];
+    const variantText = item.variant ? ` · ${item.variant}` : '';
+    return `
+      <div class="cart-item">
+        <span style="font-size:32px;">${dish.emoji}</span>
+        <div class="info" style="margin-left:10px;">
+          <div class="name">${dish.name}${variantText}</div>
+          <div class="variant">${dish.category}</div>
+        </div>
+        <button class="btn-remove" onclick="removeFromCart(${idx})" title="移除">✕</button>
+      </div>
+    `;
+  }).join('');
+}
+
+// ========== 操作 ==========
+function toggleDish(card) {
+  const key = card.dataset.dish;
+  const alreadyInCart = cart.findIndex(item => item.dishKey === key);
+
+  if (alreadyInCart >= 0) {
+    // 已经在购物车，移除
+    cart.splice(alreadyInCart, 1);
+    updateCartUI();
+    shakeElement(card);
+    return;
+  }
+
+  // 酸菜鱼需要选口味
+  if (key === 'suan-1' || key === 'suan-2') {
+    showOption(key);
+  } else {
+    addToCart(key, '');
+  }
+}
+
+function showOption(dishKey) {
+  pendingDish = dishKey;
+  const dish = menu[dishKey];
+  document.getElementById('optionTitle').textContent = `「${dish.name}」加料选择`;
+  document.getElementById('optionList').innerHTML = `
+    <div class="option-item chosen" onclick="selectOption(this, '含青笋')">
+      <span class="option-emoji">🎋</span>
+      <span style="flex:1;font-size:16px;">加一份青笋（默认）</span>
+      <div class="option-radio"></div>
+    </div>
+    <div class="option-item" onclick="selectOption(this, '不加青笋')">
+      <span class="option-emoji">🐟</span>
+      <span style="flex:1;font-size:16px;">不加青笋，纯鱼纯酸菜</span>
+      <div class="option-radio"></div>
+    </div>
+  `;
+  document.getElementById('optionPopup').classList.add('show');
+}
+
+function selectOption(el, variant) {
+  document.querySelectorAll('#optionList .option-item').forEach(i => i.classList.remove('chosen'));
+  el.classList.add('chosen');
+  el._variant = variant;
+}
+
+function confirmOption() {
+  const chosen = document.querySelector('#optionList .option-item.chosen');
+  const variant = chosen ? (chosen._variant || '含青笋') : '含青笋';
+  addToCart(pendingDish, variant);
+  closeOption();
+}
+
+function closeOption() {
+  document.getElementById('optionPopup').classList.remove('show');
+  pendingDish = null;
+}
+
+function addToCart(dishKey, variant) {
+  // 防重复
+  if (cart.some(item => item.dishKey === dishKey && item.variant === variant)) return;
+
+  cart.push({ dishKey, variant, id: Date.now() });
+  updateCartUI();
+}
+
+function removeFromCart(idx) {
+  cart.splice(idx, 1);
+  updateCartUI();
+}
+
+function shakeElement(el) {
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = '';
+}
+
+// ========== 弹窗 ==========
+function openCart() {
+  document.getElementById('cartPopup').classList.add('show');
+  renderCartList();
+}
+function closeCart() {
+  document.getElementById('cartPopup').classList.remove('show');
+}
+function closeToast() {
+  document.getElementById('successToast').classList.remove('show');
+}
+
+function submitOrder() {
+  if (cart.length === 0) return;
+  document.getElementById('cartPopup').classList.remove('show');
+
+  // 把订单编码到链接里
+  const data = cart.map(item => `${item.dishKey}:${encodeURIComponent(item.variant)}`).join(',');
+  const hash = btoa(unescape(encodeURIComponent(data)));
+  const shareUrl = window.location.origin + window.location.pathname + '#order=' + hash;
+
+  // 生成微信文案
+  const lines = cart.map(item => {
+    const dish = menu[item.dishKey];
+    const v = item.variant ? `（${item.variant}）` : '';
+    return `${dish.emoji} ${dish.name}${v}`;
+  });
+  const shareText = `🍽️ 宝贝点了这些好吃的：\n\n${lines.join('\n')}\n\n💕 点这个链接一起看：\n${shareUrl}`;
+
+  // 复制到剪贴板
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(shareText).then(() => {
+      showShareToast(shareUrl);
+    }).catch(() => {
+      showShareToast(shareUrl);
+    });
+  } else {
+    showShareToast(shareUrl);
+  }
+}
+
+function showShareToast(url) {
+  const toast = document.getElementById('successToast');
+  toast.innerHTML = `
+    <div class="big-emoji">📋</div>
+    <p style="font-size:18px;color:#555;margin:12px 0;">已经复制好啦！</p>
+    <p style="font-size:13px;color:#aaa;line-height:1.8;">
+      去<b style="color:#ff6b9d;">微信</b>粘贴发给宝贝<br>
+      他/她点开链接就能看到你点的菜～<br>
+      <span style="font-size:11px;color:#ccc;">还能继续加菜再发回来哦 💞</span>
+    </p>
+    <button style="background:linear-gradient(135deg,#ff6b9d,#ff8e8e);color:white;border:none;border-radius:25px;padding:10px 30px;font-family:inherit;font-size:15px;cursor:pointer;margin-top:10px;" onclick="closeToast()">好哒，去发微信 ❤️</button>
+  `;
+  toast.classList.add('show');
+  setTimeout(() => { toast.classList.remove('show'); }, 5000);
+}
+
+// ========== 加载分享的订单 ==========
+function loadOrderFromHash() {
+  const hash = window.location.hash;
+  if (!hash.startsWith('#order=')) return;
+
+  try {
+    const encoded = hash.replace('#order=', '');
+    const data = decodeURIComponent(escape(atob(encoded)));
+    const items = data.split(',');
+    cart = [];
+
+    items.forEach(pair => {
+      const [dishKey, variantEncoded] = pair.split(':');
+      const variant = variantEncoded ? decodeURIComponent(variantEncoded) : '';
+      if (menu[dishKey]) {
+        cart.push({ dishKey, variant, id: Date.now() + Math.random() });
+      }
+    });
+
+    updateCartUI();
+
+    // 显示一个提示：收到宝贝的菜单啦
+    setTimeout(() => {
+      const toast = document.getElementById('successToast');
+      toast.innerHTML = `
+        <div class="big-emoji">💌</div>
+        <p style="font-size:18px;color:#555;margin:12px 0;">收到宝贝的菜单啦！</p>
+        <p style="font-size:13px;color:#aaa;">看看想吃啥，加完再发回去～</p>
+        <button style="background:linear-gradient(135deg,#ff6b9d,#ff8e8e);color:white;border:none;border-radius:25px;padding:10px 30px;font-family:inherit;font-size:15px;cursor:pointer;margin-top:10px;" onclick="closeToast()">好滴 ❤️</button>
+      `;
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); }, 4000);
+    }, 500);
+
+    // 清除 hash（不刷新页面），方便后续再分享
+    history.replaceState(null, '', window.location.pathname);
+  } catch(e) {
+    console.log('订单加载失败，就当新开吧～');
+  }
+}
+
+// 点击弹窗外部关闭
+document.getElementById('optionPopup').addEventListener('click', function(e) {
+  if (e.target === this) closeOption();
+});
+document.getElementById('cartPopup').addEventListener('click', function(e) {
+  if (e.target === this) closeCart();
+});
+
+loadOrderFromHash();
+updateCartUI();
+</script>
+</body>
+</html>
