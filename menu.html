@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍽️ 宝贝专属菜单</title>
+<title>我们的菜单</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
 
@@ -11,31 +11,9 @@
 
   body {
     font-family: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
-    background: linear-gradient(135deg, #fff5f5 0%, #fce4ec 25%, #f3e5f5 50%, #e8eaf6 75%, #fff5f5 100%);
-    background-size: 400% 400%;
-    animation: gradientShift 12s ease infinite;
+    background: #faf8f5;
     min-height: 100vh;
     padding: 20px;
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  /* 飘落装饰 */
-  .floating-decor {
-    position: fixed; pointer-events: none; z-index: 0;
-    font-size: 24px; animation: floatUp 8s ease-in infinite; opacity: 0.6;
-  }
-  @keyframes floatUp {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.6; }
-    90% { opacity: 0.6; }
-    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
   }
 
   .container {
@@ -52,27 +30,13 @@
     position: relative;
   }
   .header .mascot {
-    font-size: 80px;
-    animation: bounce 1.2s ease infinite;
+    font-size: 48px;
     display: inline-block;
   }
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-18px); }
-  }
   .header h1 {
-    font-size: 36px;
-    background: linear-gradient(135deg, #ff6b9d, #c471f5, #ff6b9d);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 3s ease infinite;
+    font-size: 28px;
+    color: #555;
     margin: 8px 0;
-  }
-  @keyframes shimmer {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
   }
   .header .subtitle {
     color: #999; font-size: 15px; letter-spacing: 2px;
@@ -271,29 +235,23 @@
 </head>
 <body>
 
-<!-- 飘落装饰 -->
-<div class="floating-decor" style="left:5%; animation-delay:0s;">🌸</div>
-<div class="floating-decor" style="left:15%; animation-delay:2s;">🍜</div>
-<div class="floating-decor" style="left:25%; animation-delay:4s;">🐟</div>
-<div class="floating-decor" style="left:70%; animation-delay:1s;">✨</div>
-<div class="floating-decor" style="left:80%; animation-delay:3s;">🫧</div>
-<div class="floating-decor" style="left:90%; animation-delay:5s;">💕</div>
-<div class="floating-decor" style="left:45%; animation-delay:6s;">🌶️</div>
+<!-- 飘落装饰已移除 -->
+
 
 <div class="container">
 
   <!-- 头部 -->
   <div class="header">
     <div class="mascot">🐱</div>
-    <h1>宝贝专属菜单</h1>
-    <p class="subtitle">✨ 点你想吃的，我陪你吃 ✨</p>
+    <h1>我们的菜单</h1>
+    <p class="subtitle">点你想吃的，一起吃</p>
   </div>
 
   <!-- 订单栏 -->
   <div class="order-bar">
     <div class="count" id="cartCount">0</div>
-    <div class="summary" id="cartSummary">还没点菜呢～</div>
-    <button class="btn-view" onclick="openCart()">📋 看看点了啥</button>
+    <div class="summary" id="cartSummary"></div>
+    <button class="btn-view" onclick="openCart()">📋 已点</button>
   </div>
 
   <!-- ========== 菜品区 ========== -->
@@ -347,14 +305,14 @@
 <!-- 购物车弹窗 -->
 <div class="cart-popup" id="cartPopup">
   <div class="cart-panel">
-    <h2>🛒 我们的菜单</h2>
-    <p class="cart-hint">看看今天想吃啥～</p>
+    <h2>🛒 已点菜单</h2>
+    <p class="cart-hint"></p>
     <div class="cart-list" id="cartList"></div>
     <div class="cart-footer">
-      <span class="total">共 <span id="cartTotal">0</span> 道菜 <small>（看着就馋 😋）</small></span>
+      <span class="total">共 <span id="cartTotal">0</span> 道</span>
       <div style="display:flex;gap:8px;">
-        <button class="btn-close" onclick="closeCart()">继续逛</button>
-        <button class="btn-submit" onclick="submitOrder()">📨 告诉他/她</button>
+        <button class="btn-close" onclick="closeCart()">继续</button>
+        <button class="btn-submit" onclick="submitOrder()">📨 分享给对方</button>
       </div>
     </div>
   </div>
@@ -387,11 +345,11 @@ function updateCartUI() {
 
   const summary = document.getElementById('cartSummary');
   if (count === 0) {
-    summary.textContent = '还没点菜呢～';
+    summary.textContent = '还没点菜';
   } else if (count === 1) {
-    summary.textContent = '已选 1 道美味～';
+    summary.textContent = '已选 1 道';
   } else {
-    summary.textContent = `已选 ${count} 道美味～`;
+    summary.textContent = `已选 ${count} 道`;
   }
 
   // 卡片选中态
@@ -410,8 +368,8 @@ function renderCartList() {
 
   if (cart.length === 0) {
     list.innerHTML = `<div style="text-align:center;padding:30px;color:#ccc;">
-      <div style="font-size:60px;">🍽️</div>
-      <p style="margin-top:8px;">菜单空空哒，去选好吃的吧～</p>
+      <div style="font-size:48px;">🍽️</div>
+      <p style="margin-top:8px;">还没选菜</p>
     </div>`;
     return;
   }
@@ -536,7 +494,7 @@ function submitOrder() {
     const v = item.variant ? `（${item.variant}）` : '';
     return `${dish.emoji} ${dish.name}${v}`;
   });
-  const shareText = `🍽️ 宝贝点了这些好吃的：\n\n${lines.join('\n')}\n\n💕 点这个链接一起看：\n${shareUrl}`;
+  const shareText = `🍽️ 点了这些：\n\n${lines.join('\n')}\n\n🔗 一起看：\n${shareUrl}`;
 
   // 复制到剪贴板
   if (navigator.clipboard) {
@@ -554,13 +512,12 @@ function showShareToast(url) {
   const toast = document.getElementById('successToast');
   toast.innerHTML = `
     <div class="big-emoji">📋</div>
-    <p style="font-size:18px;color:#555;margin:12px 0;">已经复制好啦！</p>
+    <p style="font-size:18px;color:#555;margin:12px 0;">已复制到剪贴板</p>
     <p style="font-size:13px;color:#aaa;line-height:1.8;">
-      去<b style="color:#ff6b9d;">微信</b>粘贴发给宝贝<br>
-      他/她点开链接就能看到你点的菜～<br>
-      <span style="font-size:11px;color:#ccc;">还能继续加菜再发回来哦 💞</span>
+      去<b style="color:#ff6b9d;">微信</b>粘贴发给对方<br>
+      对方点开链接就能看到你点的菜<br>
     </p>
-    <button style="background:linear-gradient(135deg,#ff6b9d,#ff8e8e);color:white;border:none;border-radius:25px;padding:10px 30px;font-family:inherit;font-size:15px;cursor:pointer;margin-top:10px;" onclick="closeToast()">好哒，去发微信 ❤️</button>
+    <button style="background:linear-gradient(135deg,#ff6b9d,#ff8e8e);color:white;border:none;border-radius:25px;padding:10px 30px;font-family:inherit;font-size:15px;cursor:pointer;margin-top:10px;" onclick="closeToast()">好</button>
   `;
   toast.classList.add('show');
   setTimeout(() => { toast.classList.remove('show'); }, 5000);
@@ -592,9 +549,9 @@ function loadOrderFromHash() {
       const toast = document.getElementById('successToast');
       toast.innerHTML = `
         <div class="big-emoji">💌</div>
-        <p style="font-size:18px;color:#555;margin:12px 0;">收到宝贝的菜单啦！</p>
-        <p style="font-size:13px;color:#aaa;">看看想吃啥，加完再发回去～</p>
-        <button style="background:linear-gradient(135deg,#ff6b9d,#ff8e8e);color:white;border:none;border-radius:25px;padding:10px 30px;font-family:inherit;font-size:15px;cursor:pointer;margin-top:10px;" onclick="closeToast()">好滴 ❤️</button>
+        <p style="font-size:18px;color:#555;margin:12px 0;">收到对方菜单</p>
+        <p style="font-size:13px;color:#aaa;">看看想吃啥，加完发回去</p>
+        <button style="background:linear-gradient(135deg,#ff6b9d,#ff8e8e);color:white;border:none;border-radius:25px;padding:10px 30px;font-family:inherit;font-size:15px;cursor:pointer;margin-top:10px;" onclick="closeToast()">好</button>
       `;
       toast.classList.add('show');
       setTimeout(() => { toast.classList.remove('show'); }, 4000);
